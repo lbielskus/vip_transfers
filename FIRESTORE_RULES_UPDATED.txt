@@ -1,0 +1,112 @@
+=======================================================================================
+UPDATED FIRESTORE SECURITY RULES - WITH VEHICLES COLLECTION
+=======================================================================================
+
+Go to Firebase Console → Firestore Database → Rules tab
+Replace ALL rules with this:
+
+=======================================================================================
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated (including anonymous)
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Helper function to fetch the user's role from the 'users' collection
+    function getRole(userId) {
+      // Anonymous users don't have a user document, default to 'client'
+      let userDoc = get(/databases/$(database)/documents/users/$(userId));
+      return userDoc.exists ? userDoc.data.role : 'client';
+    }
+    
+    // Helper function to check if user is an admin
+    function isAdmin() {
+      return isSignedIn() && getRole(request.auth.uid) == 'admin';
+    }
+    
+    // Helper function to check if user is a driver (including admins)
+    function isDriver() {
+      let role = getRole(request.auth.uid);
+      return isSignedIn() && (role == 'driver' || role == 'admin');
+    }
+    
+    // Helper function to check if user owns the document
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // ========================================
+    // USERS Collection
+    // ========================================
+    match /users/{userId} {
+      
+      // Anyone authenticated can read any user profile
+      allow read: if isSignedIn();
+      
+      // User creation - can register as 'client' or 'driver'
+      // Only admins can set role to 'admin'
+      allow create: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       (request.resource.data.role == 'client' || 
+                        request.resource.data.role == 'driver');
+      
+      // Users can update their own profile (except role)
+      // Admins can update anyone's profile including role
+      allow update: if (isOwner(userId) && request.resource.data.role == resource.data.role) ||
+                       isAdmin();
+      
+      // Only admins can delete users
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // VEHICLES Collection (NEW!)
+    // ========================================
+    match /vehicles/{vehicleId} {
+      
+      // Anyone authenticated can read vehicles (for booking)
+      allow read: if isSignedIn();
+      
+      // Only admins can create/update/delete vehicles
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // ========================================
+    // BOOKINGS Collection
+    // ========================================
+    match /bookings/{bookingId} {
+      
+      // READ:
+      // Admins can see all bookings
+      // Drivers can see all bookings (to pick up jobs)
+      // Clients can only see their own bookings
+      allow read: if isDriver() || isOwner(resource.data.userId);
+      
+      // CREATE:
+      // Any authenticated user can create a booking
+      // Must set status to 'pending'
+      allow create: if isSignedIn() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.status == 'pending';
+      
+      // UPDATE:
+      // Admins can update anything
+      // Drivers can only update status field
+      allow update: if isAdmin() || 
+                       (isDriver() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']));
+      
+      // Only admins can delete bookings
+      allow delete: if isAdmin();
+    }
+  }
+}
+
+=======================================================================================
+PUBLISH THESE RULES NOW IN FIREBASE CONSOLE!
+=======================================================================================
+

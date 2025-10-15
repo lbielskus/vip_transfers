@@ -1,0 +1,73 @@
+=======================================================================================
+HOW TO CREATE ADMIN ACCOUNT IN FIREBASE
+=======================================================================================
+
+Email: info@viptranfer.lt
+Password: info123
+Role: admin
+
+=======================================================================================
+STEP-BY-STEP INSTRUCTIONS:
+=======================================================================================
+
+OPTION 1: Create via Firebase Console (RECOMMENDED)
+---------------------------------------------------
+
+1. Go to Firebase Console: https://console.firebase.google.com/
+
+2. Select your project: "vip transfers"
+
+3. Click "Authentication" in the left menu
+
+4. Click "Users" tab
+
+5. Click "Add user" button (top right)
+
+6. Fill in the form:
+   - Email: info@viptranfer.lt
+   - Password: info123
+   
+7. Click "Add user"
+
+8. Now set the role to "admin":
+   - Go to "Firestore Database" in left menu
+   - Click "users" collection
+   - Find the user you just created (info@viptranfer.lt)
+   - Click on it to edit
+   - Click "Add field" button
+   - Field name: role
+   - Field type: string
+   - Field value: admin
+   - Click "Save"
+
+DONE! ✅
+
+=======================================================================================
+
+OPTION 2: Quick Fix if User Already Exists
+-------------------------------------------
+
+If you already signed in with info@viptranfer.lt using Google:
+
+1. Go to Firestore Database
+2. Click "users" collection
+3. Find the user with email: info@viptranfer.lt
+4. Click to edit
+5. Change "role" from "client" to "admin"
+6. Save
+
+DONE! ✅
+
+=======================================================================================
+
+NOW YOU CAN LOGIN:
+------------------
+
+1. Go to: http://localhost:3000/login
+2. Click "Sign in with Email"
+3. Email: info@viptranfer.lt
+4. Password: info123
+5. You should see Admin Dashboard with "Manage Vehicles" button!
+
+=======================================================================================
+

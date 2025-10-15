@@ -1,0 +1,93 @@
+============================================================================
+VIP PERVEŽIMŲ PASLAUGA - ADMINISTRATORIAUS GREITAS STARTAS
+============================================================================
+
+📧 ADMIN PRISIJUNGIMAS:
+-----------------------
+Email: info@viptransfer.lt
+Slaptažodis: info123
+URL: http://localhost:3000/login
+
+
+⚠️ SVARBU - PIRMAS KARTAS:
+---------------------------
+1. Prisijunkite su admin@viptransfer.lt
+2. Eikite į Firebase Console: https://console.firebase.google.com/
+3. Firestore Database → "users" collection
+4. Raskite savo vartotoją (info@viptransfer.lt)
+5. Pakeiskite "role" iš "client" į "admin"
+6. Išsaugokite
+7. Atnaujinkite http://localhost:3000/dashboard
+8. Dabar matysite 3 mygtukus!
+
+
+🚗 KAIP PRIDĖTI AUTOMOBILIUS:
+------------------------------
+1. Dashboard → "Valdyti Automobilius" (žalias mygtukas)
+2. "+ Pridėti Automobilį"
+3. Užpildykite:
+   - Markė: Mercedes
+   - Modelis: Vito 2020
+   - Pilnas pavadinimas: Mercedes Vito 2020
+   - Nuotrauka: Įkelkite iš PC ARBA įklijuokite URL
+   - Talpa: 7 (keleivių)
+   - Bagažas: L
+   - Kaina: 1.29 (€/km)
+   - Pažymėkite: "Prieinamas užsakymams"
+4. "Pridėti Automobilį"
+
+Pakartokite su:
+- Toyota Corolla 2020 (4 keleiviai, M bagažas, €0.99/km)
+- BMW 5 Series (4 keleiviai, L bagažas, €1.49/km)
+
+
+📸 NUOTRAUKŲ ĮKĖLIMAS:
+----------------------
+Cloudinary automatiškai veikia!
+
+1. Spauskite "Įkelti iš PC/Telefono"
+2. Pasirinkite nuotrauką
+3. Laukite 2-3 sekundės
+4. Matysite peržiūrą
+5. Išsaugokite
+
+ARBA įklijuokite URL:
+https://images.unsplash.com/photo-1549317661-bd32c8ce0db2
+
+
+🧪 TESTUOTI SU KLIENTU:
+-----------------------
+1. Atidarykite Incognito langą
+2. http://localhost:3000
+3. "Registruotis kaip Klientas"
+4. Prisijunkite su Google
+5. "Užsakyti Kelionę"
+6. Užpildykite formą
+7. Pasirinkite automobilį (matysis su nuotraukomis!)
+8. Pateikite
+
+Kaip admin - matysite užsakymą Admin Skydelyje!
+
+
+📋 ADMIN FUNKCIJOS:
+-------------------
+✅ Valdyti automobilius (pridėti/redaguoti/ištrinti)
+✅ Matyti visus užsakymus real-time
+✅ Patvirtinti užsakymus
+✅ Pažymėti užsakymus baigtais
+✅ Atšaukti užsakymus
+
+
+🌐 DABAR VEIKIA:
+----------------
+URL: http://localhost:3000
+Kalba: 🇱🇹 Lietuvių
+Cloudinary: ✅ Veikia
+Firebase: ✅ Veikia
+Real-time: ✅ Veikia
+
+
+============================================================================
+PROTOTIPAS PILNAI PARUOŠTAS KLIENTUI! 🎉
+============================================================================
+

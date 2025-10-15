@@ -1,0 +1,67 @@
+========================================
+VIP TRANSFER SERVICE - INSTALLATION STEPS
+========================================
+
+Follow these steps in order:
+
+STEP 1: INSTALL DEPENDENCIES
+-----------------------------
+Open PowerShell in this folder and run:
+
+    npm install
+
+Wait for installation to complete (2-3 minutes).
+
+
+STEP 2: SET UP FIREBASE
+------------------------
+1. Open FIREBASE_SETUP.md in a text editor
+2. Follow ALL steps carefully
+3. Save your Firebase credentials
+
+This takes about 10-15 minutes.
+
+
+STEP 3: CREATE ENVIRONMENT FILE
+---------------------------------
+1. Copy the file ".env.example" 
+2. Rename the copy to ".env.local"
+3. Open .env.local in Notepad
+4. Paste your Firebase credentials from Step 2
+5. Save the file
+
+
+STEP 4: RUN THE APP
+-------------------
+In PowerShell, run:
+
+    npm run dev
+
+Then open your browser to: http://localhost:3000
+
+
+STEP 5: TEST IT
+---------------
+1. Click "Sign In to Book Your Ride"
+2. Sign in with Google
+3. Try booking a ride
+4. Go to Firebase Console > Firestore > users collection
+5. Find your user document
+6. Change "role" from "user" to "admin"
+7. Refresh the app - you should see Admin Panel!
+
+
+NEXT STEPS:
+-----------
+- Read README.md for full documentation
+- Read APK_BUILD_GUIDE.md to create Android app
+- Customize branding and colors
+- Deploy to Vercel or your hosting provider
+
+
+NEED HELP?
+----------
+Check SETUP_INSTRUCTIONS.md for detailed troubleshooting.
+
+========================================
+
