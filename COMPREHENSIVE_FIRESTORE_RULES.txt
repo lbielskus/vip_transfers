@@ -1,0 +1,76 @@
+=======================================================================================
+COMPREHENSIVE FIRESTORE RULES - RECOMMENDED FOR PRODUCTION
+=======================================================================================
+
+Copy these rules to Firebase Console → Firestore → Rules if you want:
+- Multiple user roles (client, driver, admin)
+- Drivers can update booking status
+- More granular permissions
+- Helper functions for cleaner code
+
+=======================================================================================
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Helper function to fetch the user's role
+    function getRole(userId) {
+      let userDoc = get(/databases/$(database)/documents/users/$(userId));
+      return userDoc.exists ? userDoc.data.role : 'client';
+    }
+    
+    // Helper function to check if user is an admin
+    function isAdmin() {
+      return isSignedIn() && getRole(request.auth.uid) == 'admin';
+    }
+    
+    // Helper function to check if user is a driver (including admins)
+    function isDriver() {
+      let role = getRole(request.auth.uid);
+      return isSignedIn() && (role == 'driver' || role == 'admin');
+    }
+    
+    // Helper function to check if user owns the document
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // USERS Collection
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       (request.resource.data.role == 'client' || 
+                        request.resource.data.role == 'driver');
+      allow update: if (isOwner(userId) && request.resource.data.role == resource.data.role) ||
+                       isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // VEHICLES Collection
+    match /vehicles/{vehicleId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // BOOKINGS Collection
+    match /bookings/{bookingId} {
+      allow read: if isDriver() || isOwner(resource.data.userId);
+      allow create: if isSignedIn() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.status == 'pending';
+      allow update: if isAdmin() || 
+                       (isDriver() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']));
+      allow delete: if isAdmin();
+    }
+  }
+}
+
+=======================================================================================
