@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/AuthContext";
+import dynamic from "next/dynamic";
+
+const PWAInstaller = dynamic(() => import("@/components/PWAInstaller"), { ssr: false });
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +24,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           {children}
+          <PWAInstaller />
         </AuthProvider>
       </body>
     </html>

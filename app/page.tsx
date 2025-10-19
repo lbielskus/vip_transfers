@@ -1,19 +1,33 @@
-'use client';
+	'use client';
 
 import { useAuth } from '@/lib/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { FaCar, FaShieldAlt, FaClock, FaStar, FaArrowRight } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import { FaCar, FaShieldAlt, FaClock, FaStar, FaArrowRight, FaAndroid } from 'react-icons/fa';
 
 export default function Home() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const [showApkDownload, setShowApkDownload] = useState(false);
 
   useEffect(() => {
     if (!loading && user) {
       router.push('/dashboard');
     }
   }, [user, loading, router]);
+
+  // Show APK download on Android browsers and when not installed as a PWA/app
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    const forceParam = url.searchParams.get('apk');
+    const forceEnv = process.env.NEXT_PUBLIC_FORCE_APK_BUTTON === 'true';
+    const force = forceParam === '1' || forceEnv;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
+    const ua = navigator.userAgent || '';
+    const isAndroid = /Android/i.test(ua);
+    setShowApkDownload(force || (isAndroid && !isStandalone));
+  }, []);
 
   if (loading) {
     return (
@@ -58,6 +72,15 @@ export default function Home() {
             >
               Prisijungti
             </a>
+            {showApkDownload && (
+              <a
+                href="/app.apk"
+                className="inline-flex items-center justify-center gap-3 bg-green-600 hover:bg-green-700 text-white font-semibold py-5 px-10 rounded-2xl transition-all transform hover:scale-105 shadow-xl"
+              >
+                <FaAndroid />
+                Atsisiųsti Android APK
+              </a>
+            )}
           </div>
 
           {/* Features */}

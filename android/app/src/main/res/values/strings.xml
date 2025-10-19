@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">VIP Pervežimai</string>
+    <string name="title_activity_main">VIP Pervežimai</string>
+    <string name="package_name">com.vippervezimai.app</string>
+    <string name="custom_url_scheme">com.vippervezimai.app</string>
+</resources>
