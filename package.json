@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "export": "next build",
-    "cap:sync": "npx cap sync",
+    "export": "BUILD_FOR_CAPACITOR=true next build",
+    "cap:sync": "npm run export && npx cap sync",
     "cap:android": "npx cap open android",
     "start": "next start",
     "lint": "next lint"
