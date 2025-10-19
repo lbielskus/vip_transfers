@@ -5,7 +5,8 @@ const config: CapacitorConfig = {
   appName: 'VIP Pervežimai',
   webDir: 'out',
   server: {
-    androidScheme: 'https'
+    url: 'https://vip-transfers.vercel.app',
+    cleartext: true
   }
 };
 
