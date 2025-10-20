@@ -1,44 +1,69 @@
 // Service Worker for VIP Transfer Service PWA
-const CACHE_NAME = 'vip-transfers-v1';
-const urlsToCache = [
+// NOTE: Avoid caching page routes like "/login" on Vercel/Next.js.
+// Caching navigations often results in opaqueredirect errors and broken routing.
+const CACHE_NAME = 'vip-transfers-v2';
+
+// Precache only core shell and immutable static assets
+const PRECACHE_URLS = [
   '/',
-  '/login',
-  '/dashboard',
-  '/booking',
   '/manifest.json',
+  '/icon-192.png',
+  '/icon-512.png',
 ];
 
-// Install event - cache resources
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)).catch(() => undefined)
   );
   self.skipWaiting();
 });
 
-// Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
-  );
+  const request = event.request;
+
+  // Always use the network for navigations so Next.js routing works on Vercel
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request).catch(async () => {
+        const cache = await caches.open(CACHE_NAME);
+        const cachedRoot = await cache.match('/');
+        return cachedRoot || Response.error();
+      })
+    );
+    return;
+  }
+
+  // For same-origin static assets, use cache-first
+  const url = new URL(request.url);
+  const isSameOrigin = url.origin === location.origin;
+  const isStaticAsset =
+    /\.(?:js|css|png|jpg|jpeg|gif|webp|svg|ico|woff2?|ttf|eot)$/i.test(url.pathname) ||
+    url.pathname.startsWith('/_next/static/');
+
+  if (isSameOrigin && isStaticAsset) {
+    event.respondWith(
+      caches.match(request).then((cached) => {
+        if (cached) return cached;
+        return fetch(request).then((response) => {
+          const cloned = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, cloned));
+          return response;
+        });
+      })
+    );
+  }
 });
 
-// Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
+    caches.keys().then((names) =>
+      Promise.all(
+        names.map((name) => {
+          if (name !== CACHE_NAME) return caches.delete(name);
+          return undefined;
         })
-      );
-    })
+      )
+    )
   );
   self.clients.claim();
 });
